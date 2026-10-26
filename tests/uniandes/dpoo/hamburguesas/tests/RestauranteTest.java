@@ -68,7 +68,7 @@ public class RestauranteTest
         restaurante.iniciarPedido( "Juan", "Calle 123" );
         Pedido pedido = restaurante.getPedidoEnCurso( );
         assertEquals( "Juan", pedido.getNombreCliente( ) );
-        assertTrue( pedido.generarTextoFactura( ).contains( "Dirección: Calle 123\n" ) );
+        assertTrue( pedido.generarTextoFactura( ).contains( "Dirección Calle 123\n" ) );
         assertTrue( restaurante.getPedidos( ).isEmpty( ) );
     }
 
@@ -108,7 +108,7 @@ public class RestauranteTest
                 ( ) -> assertNull( restaurante.getPedidoEnCurso( ) ),
                 ( ) -> assertEquals( List.of( pedido ), restaurante.getPedidos( ) ),
                 ( ) -> assertEquals( pedido.generarTextoFactura( ), Files.readString( factura ) ),
-                ( ) -> assertTrue( Files.readString( factura ).contains( "Precio Total: 23800\n" ) ) );
+                ( ) -> assertTrue( Files.readString( factura ).contains( "Total a pagar $23800\n" ) ) );
     }
 
     @Test
@@ -177,13 +177,19 @@ public class RestauranteTest
                 new File( "data/menu.txt" ), new File( "data/combos.txt" ) );
 
         assertAll(
-                ( ) -> assertEquals( 15, restaurante.getIngredientes( ).size( ) ),
-                ( ) -> assertEquals( 22, restaurante.getMenuBase( ).size( ) ),
-                ( ) -> assertEquals( 4, restaurante.getMenuCombos( ).size( ) ),
-                ( ) -> assertEquals( 22050, restaurante.getMenuCombos( ).get( 0 ).getPrecio( ) ),
-                ( ) -> assertEquals( 23850, restaurante.getMenuCombos( ).get( 1 ).getPrecio( ) ),
-                ( ) -> assertEquals( 34317, restaurante.getMenuCombos( ).get( 2 ).getPrecio( ) ),
-                ( ) -> assertEquals( 31222, restaurante.getMenuCombos( ).get( 3 ).getPrecio( ) ) );
+                ( ) -> assertEquals( 10, restaurante.getIngredientes( ).size( ) ),
+                ( ) -> assertEquals( "Queso cheddar", restaurante.getIngredientes( ).get( 0 ).getNombre( ) ),
+                ( ) -> assertEquals( 2200, restaurante.getIngredientes( ).get( 0 ).getCostoAdicional( ) ),
+                ( ) -> assertEquals( 12, restaurante.getMenuBase( ).size( ) ),
+                ( ) -> assertEquals( "Hamburguesa de la casa", restaurante.getMenuBase( ).get( 0 ).getNombre( ) ),
+                ( ) -> assertEquals( 18500, restaurante.getMenuBase( ).get( 0 ).getPrecio( ) ),
+                ( ) -> assertEquals( 5, restaurante.getMenuCombos( ).size( ) ),
+                ( ) -> assertEquals( "Almuerzo de la casa", restaurante.getMenuCombos( ).get( 0 ).getNombre( ) ),
+                ( ) -> assertEquals( 27280, restaurante.getMenuCombos( ).get( 0 ).getPrecio( ) ),
+                ( ) -> assertEquals( 40940, restaurante.getMenuCombos( ).get( 1 ).getPrecio( ) ),
+                ( ) -> assertEquals( 28800, restaurante.getMenuCombos( ).get( 2 ).getPrecio( ) ),
+                ( ) -> assertEquals( 29600, restaurante.getMenuCombos( ).get( 3 ).getPrecio( ) ),
+                ( ) -> assertEquals( 33725, restaurante.getMenuCombos( ).get( 4 ).getPrecio( ) ) );
     }
 
     @Test

@@ -5,166 +5,69 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-/**
- * La clase para organizar la información de un pedido
- */
-public class Pedido
-{
-    /**
-     * El porcentaje del IVA como un número entre 0 y 1
-     */
+public class Pedido {
     private static final double IVA = 0.19;
-
-    /**
-     * El número de pedidos que se han creado hasta el momento
-     */
     private static int numeroPedidos;
 
-    /**
-     * El número identificador de un pedido
-     */
-    private int idPedido;
+    private final int idPedido;
+    private final String nombreCliente;
+    private final String direccionCliente;
+    private final ArrayList&lt;Producto&gt; productos;
 
-    /**
-     * Los productos que hacen parte del pedido
-     */
-    private ArrayList&lt;Producto&gt; productos;
+<span class="fc" id="L17">    public Pedido(String nombreCliente, String direccionCliente) {</span>
+<span class="fc" id="L18">        idPedido = numeroPedidos++;</span>
+<span class="fc" id="L19">        this.nombreCliente = nombreCliente;</span>
+<span class="fc" id="L20">        this.direccionCliente = direccionCliente;</span>
+<span class="fc" id="L21">        productos = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L22">    }</span>
 
-    /**
-     * El nombre del cliente que hizo el pedido
-     */
-    private String nombreCliente;
-
-    /**
-     * La dirección del cliente
-     */
-    private String direccionCliente;
-
-    /**
-     * Crea un nuevo pedido, sólo con los datos del cliente.
-     * 
-     * Al crear un nuevo pedido se le debe asignar como identificador el número de pedido, y se debe incrementar el valor del atributo estático 'numeroPedidos'
-     * @param nombreCliente
-     * @param direccionCliente
-     */
-    public Pedido( String nombreCliente, String direccionCliente )
-<span class="fc" id="L51">    {</span>
-<span class="fc" id="L52">        this.idPedido = numeroPedidos++;</span>
-<span class="fc" id="L53">        this.nombreCliente = nombreCliente;</span>
-<span class="fc" id="L54">        this.direccionCliente = direccionCliente;</span>
-<span class="fc" id="L55">        productos = new ArrayList&lt;Producto&gt;( );</span>
-<span class="fc" id="L56">    }</span>
-
-    /**
-     * Retorna el identificador del pedido
-     * @return
-     */
-    public int getIdPedido( )
-    {
-<span class="fc" id="L64">        return idPedido;</span>
+    public int getIdPedido() {
+<span class="fc" id="L25">        return idPedido;</span>
     }
 
-    /**
-     * Retorna el nombre del cliente
-     * @return
-     */
-    public String getNombreCliente( )
-    {
-<span class="fc" id="L73">        return nombreCliente;</span>
+    public String getNombreCliente() {
+<span class="fc" id="L29">        return nombreCliente;</span>
     }
 
-    /**
-     * Agrega un nuevo producto al pedido
-     * @param nuevoProducto El producto que debe agregarse al pedido
-     */
-    public void agregarProducto( Producto nuevoProducto )
-    {
-<span class="fc" id="L82">        productos.add( nuevoProducto );</span>
-<span class="fc" id="L83">    }</span>
+    public void agregarProducto(Producto nuevoProducto) {
+<span class="fc" id="L33">        productos.add(nuevoProducto);</span>
+<span class="fc" id="L34">    }</span>
 
-    /**
-     * Retorna el precio total del pedido, basado en el valor de cada uno de los productos y en el IVA
-     * @return La sumatoria de los precios de los productos con el valor adicional del IVA
-     */
-    public int getPrecioTotalPedido( )
-    {
-<span class="fc" id="L91">        return getPrecioNetoPedido( ) + getPrecioIVAPedido( );</span>
+    private int getPrecioNetoPedido() {
+<span class="fc" id="L37">        int subtotal = 0;</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        for (Producto producto : productos) {</span>
+<span class="fc" id="L39">            subtotal += producto.getPrecio();</span>
+<span class="fc" id="L40">        }</span>
+<span class="fc" id="L41">        return subtotal;</span>
     }
 
-    /**
-     * Retorna el precio de los productos del pedido
-     * @return La sumatoria de los precios de los productos
-     */
-    private int getPrecioNetoPedido( )
-    {
-<span class="fc" id="L100">        int valor = 0;</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">        for( Producto item : productos )</span>
-        {
-<span class="fc" id="L103">            valor += item.getPrecio( );</span>
-<span class="fc" id="L104">        }</span>
-<span class="fc" id="L105">        return valor;</span>
+    private int getPrecioIVAPedido() {
+<span class="fc" id="L45">        return (int) (getPrecioNetoPedido() * IVA);</span>
     }
 
-    /**
-     * Retorna el valor del IVA del producto, que corresponde al 19% del precio neto
-     * @return
-     */
-    private int getPrecioIVAPedido( )
-    {
-<span class="fc" id="L114">        return ( int ) ( getPrecioNetoPedido( ) * IVA );</span>
+    public int getPrecioTotalPedido() {
+<span class="fc" id="L49">        return getPrecioNetoPedido() + getPrecioIVAPedido();</span>
     }
 
-    /**
-     * Retorna una cadena con toda la información que debe quedar en el factura. La información incluye:
-     * 
-     * 1. El nombre y la dirección del cliente
-     * 
-     * 2. La información de cada uno de los productos
-     * 
-     * 3. El precio neto del pedido
-     * 
-     * 4. El IVA del pedido
-     * 
-     * 5. El valor total del pedido
-     * @return
-     */
-    public String generarTextoFactura( )
-    {
-<span class="fc" id="L133">        StringBuffer sb = new StringBuffer( );</span>
-        
-<span class="fc" id="L135">        sb.append(&quot;Pedido #&quot; + idPedido + &quot;\n&quot;); // no se veia el ID del pedido en la factura</span>
-<span class="fc" id="L136">        sb.append( &quot;Cliente: &quot; + nombreCliente + &quot;\n&quot; );</span>
-<span class="fc" id="L137">        sb.append( &quot;Dirección: &quot; + direccionCliente + &quot;\n&quot; );</span>
-<span class="fc" id="L138">        sb.append( &quot;----------------\n&quot; );</span>
-
-<span class="fc bfc" id="L140" title="All 2 branches covered.">        for( Producto item : productos )</span>
-        {
-<span class="fc" id="L142">            sb.append( item.generarTextoFactura( ) );</span>
-<span class="fc" id="L143">        }</span>
-
-<span class="fc" id="L145">        sb.append( &quot;----------------\n&quot; );</span>
-<span class="fc" id="L146">        sb.append( &quot;Precio Neto:  &quot; + getPrecioNetoPedido( ) + &quot;\n&quot; );</span>
-<span class="fc" id="L147">        sb.append( &quot;IVA:          &quot; + getPrecioIVAPedido( ) + &quot;\n&quot; );</span>
-<span class="fc" id="L148">        sb.append( &quot;Precio Total: &quot; + getPrecioTotalPedido( ) + &quot;\n&quot; );</span>
-
-<span class="fc" id="L150">        return sb.toString( );</span>
+    public String generarTextoFactura() {
+<span class="fc" id="L53">        StringBuilder factura = new StringBuilder();</span>
+<span class="fc" id="L54">        factura.append(&quot;La Esquina\nFactura del pedido &quot;).append(idPedido).append(&quot;\n\n&quot;);</span>
+<span class="fc" id="L55">        factura.append(&quot;Cliente &quot;).append(nombreCliente).append(&quot;\n&quot;);</span>
+<span class="fc" id="L56">        factura.append(&quot;Dirección &quot;).append(direccionCliente).append(&quot;\n\nTu pedido\n\n&quot;);</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        for (Producto producto : productos) {</span>
+<span class="fc" id="L58">            factura.append(producto.generarTextoFactura());</span>
+<span class="fc" id="L59">        }</span>
+<span class="fc" id="L60">        factura.append(&quot;Subtotal $&quot;).append(getPrecioNetoPedido()).append(&quot;\n&quot;);</span>
+<span class="fc" id="L61">        factura.append(&quot;IVA del 19 por ciento $&quot;).append(getPrecioIVAPedido()).append(&quot;\n&quot;);</span>
+<span class="fc" id="L62">        factura.append(&quot;Total a pagar $&quot;).append(getPrecioTotalPedido()).append(&quot;\n\n&quot;);</span>
+<span class="fc" id="L63">        factura.append(&quot;Gracias por tu visita\n&quot;);</span>
+<span class="fc" id="L64">        return factura.toString();</span>
     }
 
-    /**
-     * Guarda la factura del pedido en el archivo indicado
-     * @param archivo El archivo donde debe quedar almacenada la factua del pedido
-     * @throws FileNotFoundException Se lanza esta excepción si no se puede crear el archivo para guardar la factura
-     */
-    public void guardarFactura( File archivo ) throws FileNotFoundException
-    {
-    	
-<span class="fc" id="L161">        String factura = generarTextoFactura( );</span>
-
-        PrintWriter out;
-<span class="fc" id="L164">        out = new PrintWriter( archivo );</span>
-<span class="fc" id="L165">        out.print( factura );</span>
-<span class="fc" id="L166">        out.close( );</span>
-<span class="fc" id="L167">    }</span>
-
+    public void guardarFactura(File archivo) throws FileNotFoundException {
+<span class="fc" id="L68">        try (PrintWriter salida = new PrintWriter(archivo)) {</span>
+<span class="fc" id="L69">            salida.print(generarTextoFactura());</span>
+        }
+<span class="fc" id="L71">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

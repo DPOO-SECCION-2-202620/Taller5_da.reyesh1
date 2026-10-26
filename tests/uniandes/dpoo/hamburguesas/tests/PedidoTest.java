@@ -51,9 +51,9 @@ public class PedidoTest
         assertEquals( 0, pedido.getPrecioTotalPedido( ) );
         String factura = pedido.generarTextoFactura( );
         assertAll(
-                ( ) -> assertTrue( factura.contains( "Precio Neto:  0\n" ) ),
-                ( ) -> assertTrue( factura.contains( "IVA:          0\n" ) ),
-                ( ) -> assertTrue( factura.contains( "Precio Total: 0\n" ) ) );
+                ( ) -> assertTrue( factura.contains( "Subtotal $0\n" ) ),
+                ( ) -> assertTrue( factura.contains( "IVA del 19 por ciento $0\n" ) ),
+                ( ) -> assertTrue( factura.contains( "Total a pagar $0\n" ) ) );
     }
 
     @Test
@@ -80,11 +80,11 @@ public class PedidoTest
         String factura = pedido.generarTextoFactura( );
         assertAll(
                 ( ) -> assertTrue( factura.contains( "hamburguesa" ) ),
-                ( ) -> assertTrue( factura.contains( "+queso" ) ),
+                ( ) -> assertTrue( factura.contains( "Con queso" ) ),
                 ( ) -> assertTrue( factura.contains( "Combo acompañamientos" ) ),
-                ( ) -> assertTrue( factura.contains( "Precio Neto:  41000\n" ) ),
-                ( ) -> assertTrue( factura.contains( "IVA:          7790\n" ) ),
-                ( ) -> assertTrue( factura.contains( "Precio Total: 48790\n" ) ) );
+                ( ) -> assertTrue( factura.contains( "Subtotal $41000\n" ) ),
+                ( ) -> assertTrue( factura.contains( "IVA del 19 por ciento $7790\n" ) ),
+                ( ) -> assertTrue( factura.contains( "Total a pagar $48790\n" ) ) );
     }
 
     @Test
@@ -92,13 +92,11 @@ public class PedidoTest
     {
         pedido.agregarProducto( new ProductoMenu( "hamburguesa", 15000 ) );
         pedido.agregarProducto( new ProductoMenu( "papas", 5000 ) );
-        String esperado = "Pedido #" + pedido.getIdPedido( ) + "\n"
-                + "Cliente: Juan\nDirección: Calle 123\n"
-                + "----------------\n"
-                + "hamburguesa\n            15000\n"
-                + "papas\n            5000\n"
-                + "----------------\n"
-                + "Precio Neto:  20000\nIVA:          3800\nPrecio Total: 23800\n";
+        String esperado = "La Esquina\nFactura del pedido " + pedido.getIdPedido( ) + "\n\n"
+                + "Cliente Juan\nDirección Calle 123\n\nTu pedido\n\n"
+                + "hamburguesa\nPrecio $15000\n\n"
+                + "papas\nPrecio $5000\n\n"
+                + "Subtotal $20000\nIVA del 19 por ciento $3800\nTotal a pagar $23800\n\nGracias por tu visita\n";
         assertEquals( esperado, pedido.generarTextoFactura( ) );
     }
 
@@ -107,7 +105,7 @@ public class PedidoTest
     {
         pedido.agregarProducto( new ProductoMenu( "producto", 1001 ) );
         assertEquals( 1191, pedido.getPrecioTotalPedido( ) );
-        assertTrue( pedido.generarTextoFactura( ).contains( "IVA:          190\n" ) );
+        assertTrue( pedido.generarTextoFactura( ).contains( "IVA del 19 por ciento $190\n" ) );
     }
 
     @Test
@@ -118,7 +116,7 @@ public class PedidoTest
         pedido.guardarFactura( archivo.toFile( ) );
 
         assertEquals( pedido.generarTextoFactura( ), Files.readString( archivo ) );
-        assertTrue( Files.readString( archivo ).contains( "Precio Total: 17850\n" ) );
+        assertTrue( Files.readString( archivo ).contains( "Total a pagar $17850\n" ) );
     }
 
     @Test
@@ -137,5 +135,21 @@ public class PedidoTest
     {
         Path archivo = directorioTemporal.resolve( "inexistente/factura.txt" );
         assertThrows( FileNotFoundException.class, ( ) -> pedido.guardarFactura( archivo.toFile( ) ) );
+    }
+
+    @Test
+    void facturaNoIncluyeGuionesPuntosNiComas( )
+    {
+        ProductoAjustado ajustado = new ProductoAjustado( new ProductoMenu( "Hamburguesa de la casa", 18500 ) );
+        ajustado.agregarIngrediente( new Ingrediente( "queso", 2200 ) );
+        ajustado.eliminarIngrediente( new Ingrediente( "tomate", 900 ) );
+        pedido.agregarProducto( ajustado );
+        pedido.agregarProducto( new Combo( "Para compartir", 0.075,
+                new ArrayList<>( List.of( new ProductoMenu( "Papas rústicas", 6500 ) ) ) ) );
+
+        String factura = pedido.generarTextoFactura( );
+        assertFalse( factura.matches( "(?s).*[-;.,].*" ) );
+        assertTrue( factura.contains( "Con queso por $2200" ) );
+        assertTrue( factura.contains( "Sin tomate" ) );
     }
 }

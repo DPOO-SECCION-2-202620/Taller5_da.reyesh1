@@ -1,0 +1,25 @@
+La Esquina
+Factura del pedido 0
+
+Cliente Camila Rojas
+Dirección Carrera 18 número 63 24
+
+Tu pedido
+
+Hamburguesa de la casa
+Precio base $18500
+Con Queso cheddar por $2200
+Sin Tomate fresco
+Valor del producto $20700
+
+Papas rústicas
+Precio $6500
+
+Limonada natural
+Precio $6000
+
+Subtotal $33200
+IVA del 19 por ciento $6308
+Total a pagar $39508
+
+Gracias por tu visita

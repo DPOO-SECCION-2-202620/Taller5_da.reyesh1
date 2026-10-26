@@ -2,96 +2,53 @@
 
 import java.util.ArrayList;
 
-/**
- * Un producto ajustado es un producto para el cual el cliente solicitó alguna modificación.
- */
-public class ProductoAjustado implements Producto
-{
-    /**
-     * El producto base que el cliente sobre el cual el cliente quiere hacer ajustes
-     */
-    private ProductoMenu productoBase;
+public class ProductoAjustado implements Producto {
+    private final ProductoMenu productoBase;
+    private final ArrayList&lt;Ingrediente&gt; agregados;
+    private final ArrayList&lt;Ingrediente&gt; eliminados;
 
-    /**
-     * La lista de ingrediente que el usuario quiere agregar. El mismo ingrediente puede aparecer varias veces.
-     */
-    private ArrayList&lt;Ingrediente&gt; agregados;
-
-    /**
-     * La lista de ingrediente que el usuario quiere eliminar.
-     */
-    private ArrayList&lt;Ingrediente&gt; eliminados;
-
-    /**
-     * Construye un nuevo producto ajustado a partir del producto base y sin modificaciones
-     * @param productoBase El producto base que se va a ajustar
-     */
-    public ProductoAjustado( ProductoMenu productoBase )
-<span class="fc" id="L30">    {</span>
-<span class="fc" id="L31">        this.productoBase = productoBase;</span>
-<span class="fc" id="L32">        agregados = new ArrayList&lt;Ingrediente&gt;( );</span>
-<span class="fc" id="L33">        eliminados = new ArrayList&lt;Ingrediente&gt;( );</span>
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L10">    public ProductoAjustado(ProductoMenu productoBase) {</span>
+<span class="fc" id="L11">        this.productoBase = productoBase;</span>
+<span class="fc" id="L12">        agregados = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L13">        eliminados = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L14">    }</span>
 
     @Override
-    public String getNombre( )
-    {
-<span class="fc" id="L39">        return productoBase.getNombre( );</span>
+    public String getNombre() {
+<span class="fc" id="L18">        return productoBase.getNombre();</span>
     }
 
-    /**
-     * Retorna el precio del producto ajustado, que debe ser igual al del producto base, sumándole el precio de los ingredientes adicionales.
-     */
     @Override
-    public int getPrecio( )
-    {
-<span class="fc" id="L48">        int precio = productoBase.getPrecio( );</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        for( Ingrediente ingrediente : agregados )</span>
-        {
-<span class="fc" id="L51">            precio += ingrediente.getCostoAdicional( );</span>
-<span class="fc" id="L52">        }</span>
-<span class="fc" id="L53">        return precio;</span>
+    public int getPrecio() {
+<span class="fc" id="L23">        int total = productoBase.getPrecio();</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        for (Ingrediente ingrediente : agregados) {</span>
+<span class="fc" id="L25">            total += ingrediente.getCostoAdicional();</span>
+<span class="fc" id="L26">        }</span>
+<span class="fc" id="L27">        return total;</span>
     }
-    /**
-     * Registra una adición. Un ingrediente puede agregarse varias veces y cada adición se cobra.
-     */
-    public void agregarIngrediente(Ingrediente ingrediente)
-    {
-<span class="fc" id="L60">        agregados.add(ingrediente);</span>
-<span class="fc" id="L61">    }</span>
 
-    /**
-     * Registra una eliminación sin modificar el precio base ni el costo de las adiciones.
-     */
-    public void eliminarIngrediente(Ingrediente ingrediente)
-    {
-<span class="fc" id="L68">        eliminados.add(ingrediente);</span>
-<span class="fc" id="L69">    }</span>
+    public void agregarIngrediente(Ingrediente ingrediente) {
+<span class="fc" id="L31">        agregados.add(ingrediente);</span>
+<span class="fc" id="L32">    }</span>
 
-    /**
-     * Genera el texto que debe aparecer en la factura.
-     * 
-     * El texto incluye el producto base, los ingredientes adicionales con su costo, los ingredientes eliminados, y el precio total
-     */
+    public void eliminarIngrediente(Ingrediente ingrediente) {
+<span class="fc" id="L35">        eliminados.add(ingrediente);</span>
+<span class="fc" id="L36">    }</span>
+
     @Override
-    public String generarTextoFactura( )
-    {
-<span class="fc" id="L79">        StringBuffer sb = new StringBuffer( );</span>
-<span class="fc" id="L80">        sb.append( productoBase.generarTextoFactura() );</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        for( Ingrediente ing : agregados )</span>
-        {
-<span class="fc" id="L83">            sb.append( &quot;    +&quot; + ing.getNombre( ) );</span>
-<span class="fc" id="L84">            sb.append( &quot;\n    &quot; + ing.getCostoAdicional( ) + &quot;\n&quot;);</span>
-<span class="fc" id="L85">        }</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        for( Ingrediente ing : eliminados )</span>
-        {
-<span class="fc" id="L88">            sb.append( &quot;    -&quot; + ing.getNombre( ) + &quot;\n&quot;);</span>
-<span class="fc" id="L89">        }</span>
-
-<span class="fc" id="L91">        sb.append( &quot;\n    &quot; + getPrecio( ) + &quot;\n&quot; );</span>
-
-<span class="fc" id="L93">        return sb.toString( );</span>
+    public String generarTextoFactura() {
+<span class="fc" id="L40">        StringBuilder detalle = new StringBuilder();</span>
+<span class="fc" id="L41">        detalle.append(productoBase.getNombre()).append(&quot;\n&quot;);</span>
+<span class="fc" id="L42">        detalle.append(&quot;Precio base $&quot;).append(productoBase.getPrecio()).append(&quot;\n&quot;);</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        for (Ingrediente ingrediente : agregados) {</span>
+<span class="fc" id="L44">            detalle.append(&quot;Con &quot;).append(ingrediente.getNombre())</span>
+<span class="fc" id="L45">                    .append(&quot; por $&quot;).append(ingrediente.getCostoAdicional()).append(&quot;\n&quot;);</span>
+<span class="fc" id="L46">        }</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        for (Ingrediente ingrediente : eliminados) {</span>
+<span class="fc" id="L48">            detalle.append(&quot;Sin &quot;).append(ingrediente.getNombre()).append(&quot;\n&quot;);</span>
+<span class="fc" id="L49">        }</span>
+<span class="fc" id="L50">        detalle.append(&quot;Valor del producto $&quot;).append(getPrecio()).append(&quot;\n\n&quot;);</span>
+<span class="fc" id="L51">        return detalle.toString();</span>
     }
-
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

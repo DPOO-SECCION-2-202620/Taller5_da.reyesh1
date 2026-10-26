@@ -1,12 +1,12 @@
-
 package uniandes.dpoo.hamburguesas.consola;
 
-import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 import uniandes.dpoo.hamburguesas.excepciones.HamburguesaException;
 import uniandes.dpoo.hamburguesas.excepciones.NoHayPedidoEnCursoException;
+import uniandes.dpoo.hamburguesas.excepciones.YaHayUnPedidoEnCursoException;
 import uniandes.dpoo.hamburguesas.mundo.Combo;
 import uniandes.dpoo.hamburguesas.mundo.Ingrediente;
 import uniandes.dpoo.hamburguesas.mundo.Pedido;
@@ -14,319 +14,173 @@ import uniandes.dpoo.hamburguesas.mundo.ProductoAjustado;
 import uniandes.dpoo.hamburguesas.mundo.ProductoMenu;
 import uniandes.dpoo.hamburguesas.mundo.Restaurante;
 
-public class ConsolaHamburguesas
-{
-    private static Restaurante restaurante;
-    private static Scanner scanner = new Scanner(System.in);
+public class ConsolaHamburguesas {
+    private static final Restaurante restaurante = new Restaurante();
+    private static final Scanner entrada = new Scanner(System.in);
 
-    public static void main(String[] args)
-    {
-        restaurante = new Restaurante();
-
-        System.out.println("Bienvenido al restaurante\n");
-
-        try
-        {
-            cargarDatos();
-            System.out.println("Datos cargados correctamente.");
-        }
-        catch (HamburguesaException | IOException e)
-        {
-            System.out.println("Error al cargar los datos: " + e.getMessage());
-            scanner.close();
+    public static void main(String[] args) {
+        System.out.println("Bienvenido a La Esquina");
+        try {
+            restaurante.cargarInformacionRestaurante(new File("data/ingredientes.txt"),
+                    new File("data/menu.txt"), new File("data/combos.txt"));
+        } catch (HamburguesaException | IOException | NumberFormatException error) {
+            System.out.println("No pudimos abrir el menú " + error.getMessage());
+            entrada.close();
             return;
         }
 
         boolean continuar = true;
-
-        while (continuar)
-        {
-            int opcion = mostrarMenu(
-                "MENU PRINCIPAL",
-                new String[] {
-                    "Mostrar menu del restaurante",
-                    "Iniciar nuevo pedido",
-                    "Agregar elemento al pedido",
-                    "Cerrar pedido y guardar factura",
-                    "Consultar pedido por ID",
-                    "Salir"
+        while (continuar) {
+            int opcion = mostrarOpciones();
+            try {
+                switch (opcion) {
+                    case 1 -> mostrarCarta();
+                    case 2 -> abrirPedido();
+                    case 3 -> agregarProducto();
+                    case 4 -> finalizarPedido();
+                    case 5 -> buscarPedido();
+                    case 6 -> continuar = false;
+                    default -> System.out.println("Elige una opción entre 1 y 6");
                 }
-            );
-
-            try
-            {
-                if (opcion == 1)
-                {
-                    consultarMenu();
-                }
-                else if (opcion == 2)
-                {
-                    iniciarPedido();
-                }
-                else if (opcion == 3)
-                {
-                    agregarElemento();
-                }
-                else if (opcion == 4)
-                {
-                    cerrarPedido();
-                }
-                else if (opcion == 5)
-                {
-                    consultarPedido();
-                }
-                else if (opcion == 6)
-                {
-                    continuar = false;
-                }
-                else
-                {
-                    System.out.println("Opcion no valida.");
-                }
-            }
-            catch (NumberFormatException e)
-            {
-                System.out.println("Debes ingresar un numero valido.");
-            }
-            catch (Exception e)
-            {
-                System.out.println("Error: " + e.getMessage());
+            } catch (NumberFormatException error) {
+                System.out.println("Escribe el número de la opción que quieres elegir");
+            } catch (HamburguesaException | IOException error) {
+                System.out.println(error.getMessage());
             }
         }
-
-        System.out.println("Aplicacion terminada.");
-        scanner.close();
+        System.out.println("Gracias por visitar La Esquina");
+        entrada.close();
     }
 
-    private static int mostrarMenu(String titulo, String[] opciones)
-    {
-        System.out.println("\n--- " + titulo + " ---");
-
-        for (int i = 0; i < opciones.length; i++)
-        {
-            System.out.println((i + 1) + ". " + opciones[i]);
+    private static int mostrarOpciones() {
+        System.out.println("\nQué quieres hacer\n");
+        System.out.println("1 Ver la carta");
+        System.out.println("2 Abrir un pedido");
+        System.out.println("3 Elegir algo para comer");
+        System.out.println("4 Terminar y guardar la cuenta");
+        System.out.println("5 Buscar un pedido");
+        System.out.println("6 Salir");
+        if (!entrada.hasNextLine()) {
+            return 6;
         }
-
-        System.out.print("Seleccione una opcion: ");
-        System.out.print("\n");
-
-        try
-        {
-            int opcion = Integer.parseInt(scanner.nextLine());
-            return opcion;
-        }
-        catch (NumberFormatException e)
-        {
-            return -1;
+        try {
+            return Integer.parseInt(entrada.nextLine());
+        } catch (NumberFormatException error) {
+            return 0;
         }
     }
 
-    private static void cargarDatos()
-        throws NumberFormatException, HamburguesaException, IOException
-    {
-        File ingredientes = new File("data/ingredientes.txt");
-        File menu = new File("data/menu.txt");
-        File combos = new File("data/combos.txt");
-
-        restaurante.cargarInformacionRestaurante(
-            ingredientes, menu, combos
-        );
+    private static void mostrarCarta() {
+        int numero = 1;
+        System.out.println("\nNuestra carta\n");
+        for (ProductoMenu producto : restaurante.getMenuBase()) {
+            System.out.println(numero++ + " " + producto.getNombre() + " $" + producto.getPrecio());
+        }
+        System.out.println("\nNuestros combos\n");
+        for (Combo combo : restaurante.getMenuCombos()) {
+            System.out.println(numero++ + " " + combo.getNombre() + " $" + combo.getPrecio());
+        }
+        System.out.println();
     }
 
-    private static void consultarMenu()
-    {
-        int w = 1;
-        System.out.println("Mostrando Productos");
-        for (ProductoMenu i : restaurante.getMenuBase())
-        {
-            System.out.println(w + ". ");
-            System.out.println(i.getNombre() + "\n");
-            System.out.println("Precio: " + i.getPrecio() + "\n");
-            System.out.println("-".repeat(60));
-            w += 1;
-        }
-        
-        System.out.println("Mostrando Combos");
-        for (Combo i : restaurante.getMenuCombos())
-        {
-            System.out.println(w + ". ");
-            System.out.println(i.getNombre() + "\n");
-            System.out.println("Precio: " + i.getPrecio() + "\n");
-            System.out.println("-".repeat(60));
-            w += 1;
-        }
-    }
-
-    private static void iniciarPedido() throws Exception
-    {
-        if (restaurante.getPedidoEnCurso() != null)
-        {
-            System.out.println("Ya hay un pedido en curso.");
+    private static void abrirPedido() throws YaHayUnPedidoEnCursoException {
+        if (restaurante.getPedidoEnCurso() != null) {
+            System.out.println("Todavía hay un pedido abierto");
             return;
         }
-
-        System.out.println("Nombre del cliente:");
-        String nombre = scanner.nextLine();
-
-        System.out.println("Direccion:");
-        String direccion = scanner.nextLine();
-
+        System.out.println("A nombre de quién dejamos el pedido");
+        String nombre = entrada.nextLine();
+        System.out.println("Cuál es la dirección de entrega");
+        String direccion = entrada.nextLine();
         restaurante.iniciarPedido(nombre, direccion);
-
-        System.out.println("Pedido iniciado correctamente.");
+        System.out.println("Tu pedido quedó abierto");
     }
 
-    private static void agregarElemento()
-    {
-        if (restaurante.getPedidoEnCurso() == null)
-        {
-            System.out.println("Primero debes iniciar un pedido.");
-            return;
-        }
-
-        consultarMenu();
-
-        System.out.println("Selecciona el numero del producto:");
-        int opcion = Integer.parseInt(scanner.nextLine());
-
-        int cantidad = restaurante.getMenuBase().size();
-
-        if (opcion <= cantidad && opcion >= 1)
-        {
-            ProductoMenu producto =
-                restaurante.getMenuBase().get(opcion - 1);
-
-            System.out.println("Quieres modificar el producto? (s/n)");
-            String respuesta = scanner.nextLine();
-
-            if (respuesta.equalsIgnoreCase("s"))
-            {
-                ProductoAjustado ajustado = ajustarProducto(producto);
-
-                restaurante.getPedidoEnCurso().agregarProducto(ajustado);
-            }
-            else
-            {
-                restaurante.getPedidoEnCurso().agregarProducto(producto);
-            }
-
-            System.out.println("Producto agregado al pedido.");
-        }
-        else if (opcion > cantidad &&
-                 opcion <= cantidad + restaurante.getMenuCombos().size())
-        {
-            Combo combo = restaurante.getMenuCombos().get(opcion - cantidad - 1);
-
-            restaurante.getPedidoEnCurso().agregarProducto(combo);
-
-            System.out.println("Combo agregado al pedido.");
-        }
-        else
-        {
-            System.out.println("Opcion invalida.");
-        }
-    }
-
-    private static ProductoAjustado ajustarProducto(ProductoMenu producto)
-    {
-        ProductoAjustado ajustado = new ProductoAjustado(producto);
-
-        boolean continuar = true;
-
-        while (continuar)
-        {
-            System.out.println("\n1. Agregar ingrediente");
-            System.out.println("2. Eliminar ingrediente");
-            System.out.println("3. Terminar");
-
-            int opcion = Integer.parseInt(scanner.nextLine());
-
-            if (opcion == 3)
-            {
-                continuar = false;
-            }
-            else if (opcion == 1 || opcion == 2)
-            {
-                int numero = 1;
-
-                for (Ingrediente i : restaurante.getIngredientes())
-                {
-                    System.out.println(numero + ". " + i.getNombre()+ " - $" + i.getCostoAdicional());
-                    numero++;
-                }
-
-                System.out.println("Selecciona un ingrediente:");
-                int seleccion = Integer.parseInt(scanner.nextLine());
-
-                if (seleccion >= 1 &&
-                    seleccion <= restaurante.getIngredientes().size())
-                {
-                    Ingrediente ingrediente =
-                        restaurante.getIngredientes().get(seleccion - 1);
-
-                    if (opcion == 1)
-                    {
-                        ajustado.agregarIngrediente(ingrediente);
-                        System.out.println("Ingrediente agregado.");
-                    }
-                    else
-                    {
-                        ajustado.eliminarIngrediente(ingrediente);
-                        System.out.println("Ingrediente eliminado.");
-                    }
-                }
-                else
-                {
-                    System.out.println("Ingrediente no valido.");
-                }
-            }
-            else
-            {
-                System.out.println("Opcion no valida.");
-            }
-        }
-
-        return ajustado;
-    }
-
-    private static void cerrarPedido() throws IOException, NoHayPedidoEnCursoException
-    {
+    private static void agregarProducto() {
         Pedido pedido = restaurante.getPedidoEnCurso();
-
-        if (pedido == null)
-        {
-            System.out.println("No hay ningun pedido en curso.");
+        if (pedido == null) {
+            System.out.println("Abre un pedido antes de elegir los productos");
             return;
         }
-
-        System.out.println(pedido.generarTextoFactura());
-
-        restaurante.cerrarYGuardarPedido();
-
-        System.out.println("Factura guardada correctamente.");
+        mostrarCarta();
+        System.out.println("Escribe el número del producto o combo");
+        int seleccion = Integer.parseInt(entrada.nextLine());
+        int productos = restaurante.getMenuBase().size();
+        if (seleccion >= 1 && seleccion <= productos) {
+            ProductoMenu producto = restaurante.getMenuBase().get(seleccion - 1);
+            System.out.println("Quieres cambiar algún ingrediente s o n");
+            if (entrada.nextLine().equalsIgnoreCase("s")) {
+                pedido.agregarProducto(ajustarProducto(producto));
+            } else {
+                pedido.agregarProducto(producto);
+            }
+        } else if (seleccion > productos && seleccion <= productos + restaurante.getMenuCombos().size()) {
+            pedido.agregarProducto(restaurante.getMenuCombos().get(seleccion - productos - 1));
+        } else {
+            System.out.println("Ese número no aparece en la carta");
+            return;
+        }
+        System.out.println("Lo agregamos a tu pedido");
     }
 
-    private static void consultarPedido()
-    {
-        System.out.println("Ingresa el ID del pedido:");
-        int id = Integer.parseInt(scanner.nextLine());
+    private static ProductoAjustado ajustarProducto(ProductoMenu producto) {
+        ProductoAjustado ajustado = new ProductoAjustado(producto);
+        while (true) {
+            System.out.println("\n1 Añadir un ingrediente\n2 Quitar un ingrediente\n3 Dejarlo así");
+            int opcion = Integer.parseInt(entrada.nextLine());
+            if (opcion == 3) {
+                return ajustado;
+            }
+            if (opcion != 1 && opcion != 2) {
+                System.out.println("Elige una opción entre 1 y 3");
+                continue;
+            }
+            int numero = 1;
+            for (Ingrediente ingrediente : restaurante.getIngredientes()) {
+                System.out.println(numero++ + " " + ingrediente.getNombre() + " $" + ingrediente.getCostoAdicional());
+            }
+            System.out.println("Cuál ingrediente quieres elegir");
+            int seleccion = Integer.parseInt(entrada.nextLine());
+            if (seleccion < 1 || seleccion > restaurante.getIngredientes().size()) {
+                System.out.println("Ese ingrediente no aparece en la lista");
+                continue;
+            }
+            Ingrediente ingrediente = restaurante.getIngredientes().get(seleccion - 1);
+            if (opcion == 1) {
+                ajustado.agregarIngrediente(ingrediente);
+                System.out.println("Lo añadimos");
+            } else {
+                ajustado.eliminarIngrediente(ingrediente);
+                System.out.println("Lo preparamos sin ese ingrediente");
+            }
+        }
+    }
 
-        if (restaurante.getPedidoEnCurso() != null &&
-            restaurante.getPedidoEnCurso().getIdPedido() == id)
-        {
-            System.out.println(restaurante.getPedidoEnCurso().generarTextoFactura());
+    private static void finalizarPedido() throws NoHayPedidoEnCursoException, IOException {
+        Pedido pedido = restaurante.getPedidoEnCurso();
+        if (pedido == null) {
+            System.out.println("No hay una cuenta pendiente");
             return;
         }
+        restaurante.cerrarYGuardarPedido();
+        System.out.println(pedido.generarTextoFactura());
+        System.out.println("Guardamos la factura de tu pedido");
+    }
 
-        for (Pedido i : restaurante.getPedidos())
-        {
-            if (i.getIdPedido() == id)
-            {
-                System.out.println(i.generarTextoFactura());
+    private static void buscarPedido() {
+        System.out.println("Qué número de pedido quieres consultar");
+        int numero = Integer.parseInt(entrada.nextLine());
+        Pedido actual = restaurante.getPedidoEnCurso();
+        if (actual != null && actual.getIdPedido() == numero) {
+            System.out.println(actual.generarTextoFactura());
+            return;
+        }
+        for (Pedido pedido : restaurante.getPedidos()) {
+            if (pedido.getIdPedido() == numero) {
+                System.out.println(pedido.generarTextoFactura());
                 return;
             }
         }
-
-        System.out.println("No se encontro un pedido con ese ID.");
+        System.out.println("No encontramos un pedido con ese número");
     }
 }

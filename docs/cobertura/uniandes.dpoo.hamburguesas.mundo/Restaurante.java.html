@@ -13,318 +13,227 @@ import uniandes.dpoo.hamburguesas.excepciones.ProductoFaltanteException;
 import uniandes.dpoo.hamburguesas.excepciones.ProductoRepetidoException;
 import uniandes.dpoo.hamburguesas.excepciones.YaHayUnPedidoEnCursoException;
 
-/**
- * La clase que administra toda la información del restaurante de hamburguesas
- */
 public class Restaurante
 {
-    /**
-     * La ruta a la carpeta donde se almacenan las facturas
-     */
+
     private static final String CARPETA_FACTURAS = &quot;./facturas/&quot;;
 
-    /**
-     * La primera parte del nombre de los archivos de facturas
-     */
     private static final String PREFIJO_FACTURAS = &quot;factura_&quot;;
 
-    /**
-     * El directorio en el que se guardan las facturas de este restaurante.
-     */
     private final File carpetaFacturas;
 
-    /**
-     * La lista de pedidos que ha recibido el restaurante y que ya se han cerrado
-     */
     private ArrayList&lt;Pedido&gt; pedidos;
 
-    /**
-     * La lista de ingredientes disponibles para las hamburguesas
-     */
     private ArrayList&lt;Ingrediente&gt; ingredientes;
 
-    /**
-     * La lista de Items que conforman el menú de productos básicos del restaurante
-     */
     private ArrayList&lt;ProductoMenu&gt; menuBase;
 
-    /**
-     * La lista de Combos que ofrece el restaurante
-     */
     private ArrayList&lt;Combo&gt; menuCombos;
 
-    /**
-     * El pedido en curso. Cuando no hay un pedido en cuerso, este atributo será null.
-     */
     private Pedido pedidoEnCurso;
 
-    // ***************************************
-    // CONSTRUCTOR
-    // ***************************************
-
-    /**
-     * Crea un restaurante vacío, sin pedidos, ingredientes, ni ítems en el menú
-     */
     public Restaurante( )
     {
-<span class="fc" id="L70">        this( new File( CARPETA_FACTURAS ) );</span>
-<span class="fc" id="L71">    }</span>
+<span class="fc" id="L37">        this( new File( CARPETA_FACTURAS ) );</span>
+<span class="fc" id="L38">    }</span>
 
-    /**
-     * Crea un restaurante vacío que guarda sus facturas en el directorio indicado.
-     * @param carpetaFacturas Un directorio existente donde se guardarán las facturas
-     */
     public Restaurante( File carpetaFacturas )
-<span class="fc" id="L78">    {</span>
-<span class="fc" id="L79">        this.carpetaFacturas = carpetaFacturas;</span>
-<span class="fc" id="L80">        pedidos = new ArrayList&lt;Pedido&gt;( );</span>
-<span class="fc" id="L81">        ingredientes = new ArrayList&lt;Ingrediente&gt;( );</span>
-<span class="fc" id="L82">        menuBase = new ArrayList&lt;ProductoMenu&gt;( );</span>
-<span class="fc" id="L83">        menuCombos = new ArrayList&lt;Combo&gt;( );</span>
-<span class="fc" id="L84">    }</span>
+<span class="fc" id="L41">    {</span>
+<span class="fc" id="L42">        this.carpetaFacturas = carpetaFacturas;</span>
+<span class="fc" id="L43">        pedidos = new ArrayList&lt;Pedido&gt;( );</span>
+<span class="fc" id="L44">        ingredientes = new ArrayList&lt;Ingrediente&gt;( );</span>
+<span class="fc" id="L45">        menuBase = new ArrayList&lt;ProductoMenu&gt;( );</span>
+<span class="fc" id="L46">        menuCombos = new ArrayList&lt;Combo&gt;( );</span>
+<span class="fc" id="L47">    }</span>
 
-    // ***************************************
-    // Métodos
-    // ***************************************
-
-    /**
-     * Inicia un nuevo pedido.
-     * 
-     * @param nombreCliente El nombre del cliente que está iniciando el pedido
-     * @param direccionCliente La dirección del cliente
-     * @throws YaHayUnPedidoEnCursoException Se lanza esta excepción si ya había un pedido en curso cuando se llamó a este método
-     */
     public void iniciarPedido( String nombreCliente, String direccionCliente ) throws YaHayUnPedidoEnCursoException
     {
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        if( pedidoEnCurso != null )</span>
-<span class="fc" id="L100">            throw new YaHayUnPedidoEnCursoException( pedidoEnCurso.getNombreCliente( ), nombreCliente );</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if( pedidoEnCurso != null )</span>
+<span class="fc" id="L52">            throw new YaHayUnPedidoEnCursoException( pedidoEnCurso.getNombreCliente( ), nombreCliente );</span>
 
-<span class="fc" id="L102">        pedidoEnCurso = new Pedido( nombreCliente, direccionCliente );</span>
-<span class="fc" id="L103">    }</span>
+<span class="fc" id="L54">        pedidoEnCurso = new Pedido( nombreCliente, direccionCliente );</span>
+<span class="fc" id="L55">    }</span>
 
-    /**
-     * Este método cierra un pedido, creando la factura y guardándolo en el histórico de pedidos.
-     * 
-     * La factura queda guardada en un archivo cuyo nombre debe ser PREFIJO_FACTURAS, seguido del identificador del pedido, y debe tener extensión 'txt'. El archivo debe
-     * quedar en la carpeta CARPETA_FACTURAS.
-     * 
-     * @throws NoHayPedidoEnCursoException Lanza esta excepción si no hay un pedido en curso
-     * @throws FileNotFoundException Lanza esta excepción si hay problemas guardando el archivo
-     */
     public void cerrarYGuardarPedido( ) throws NoHayPedidoEnCursoException, IOException
     {
-<span class="fc bfc" id="L116" title="All 2 branches covered.">        if( pedidoEnCurso == null )</span>
-<span class="fc" id="L117">            throw new NoHayPedidoEnCursoException( );</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if( pedidoEnCurso == null )</span>
+<span class="fc" id="L60">            throw new NoHayPedidoEnCursoException( );</span>
 
-<span class="fc" id="L119">        String nombreArchivo = PREFIJO_FACTURAS + pedidoEnCurso.getIdPedido( ) + &quot;.txt&quot;;</span>
-<span class="fc" id="L120">        pedidoEnCurso.guardarFactura( new File( carpetaFacturas, nombreArchivo ) );</span>
-<span class="fc" id="L121">        pedidos.add(pedidoEnCurso);</span>
-<span class="fc" id="L122">        pedidoEnCurso = null;</span>
-<span class="fc" id="L123">    }</span>
+<span class="fc" id="L62">        String nombreArchivo = PREFIJO_FACTURAS + pedidoEnCurso.getIdPedido( ) + &quot;.txt&quot;;</span>
+<span class="fc" id="L63">        pedidoEnCurso.guardarFactura( new File( carpetaFacturas, nombreArchivo ) );</span>
+<span class="fc" id="L64">        pedidos.add(pedidoEnCurso);</span>
+<span class="fc" id="L65">        pedidoEnCurso = null;</span>
+<span class="fc" id="L66">    }</span>
 
-    /**
-     * Retorna el pedido actual en curso. Si no hay un pedido en curso, retorna null.
-     * 
-     * @return El pedido en curso o null
-     */
     public Pedido getPedidoEnCurso( )
     {
-<span class="fc" id="L132">        return pedidoEnCurso;</span>
+<span class="fc" id="L70">        return pedidoEnCurso;</span>
     }
 
-    /**
-     * Retorna la lista completa de pedidos cerrados en el restaurante.
-     * 
-     * @return La lista de pedidos cerrados
-     */
     public ArrayList&lt;Pedido&gt; getPedidos( )
     {
-<span class="fc" id="L142">        return pedidos;</span>
+<span class="fc" id="L75">        return pedidos;</span>
     }
 
-    /**
-     * Retorna el menú de hamburguesas básicas del restaurante
-     * 
-     * @return
-     */
     public ArrayList&lt;ProductoMenu&gt; getMenuBase( )
     {
-<span class="fc" id="L152">        return menuBase;</span>
+<span class="fc" id="L80">        return menuBase;</span>
     }
 
-    /**
-     * Retorna el menú de los combos del restaurante
-     * 
-     * @return
-     */
     public ArrayList&lt;Combo&gt; getMenuCombos( )
     {
-<span class="fc" id="L162">        return menuCombos;</span>
+<span class="fc" id="L85">        return menuCombos;</span>
     }
 
-    /**
-     * Retorna la lista completa de ingredientes del restaurante
-     * 
-     * @return
-     */
     public ArrayList&lt;Ingrediente&gt; getIngredientes( )
     {
-<span class="fc" id="L172">        return ingredientes;</span>
+<span class="fc" id="L90">        return ingredientes;</span>
     }
 
-    /**
-     * Carga la información de los ingredientes, los productos y los combos del restaurante
-     * 
-     * @param archivoIngredientes El archivo que tiene la información de los ingredientes
-     * @param archivoMenu El archivo que tiene la información de los productos base
-     * @param archivoCombos El archivo que tiene la información de los combos
-     * @throws IOException
-     * @throws NumberFormatException
-     */
     public void cargarInformacionRestaurante( File archivoIngredientes, File archivoMenu, File archivoCombos ) throws HamburguesaException, NumberFormatException, IOException
     {
-<span class="fc" id="L186">        cargarIngredientes( archivoIngredientes );</span>
-<span class="fc" id="L187">        cargarMenu( archivoMenu );</span>
-<span class="fc" id="L188">        cargarCombos( archivoCombos );</span>
-<span class="fc" id="L189">    }</span>
+<span class="fc" id="L95">        cargarIngredientes( archivoIngredientes );</span>
+<span class="fc" id="L96">        cargarMenu( archivoMenu );</span>
+<span class="fc" id="L97">        cargarCombos( archivoCombos );</span>
+<span class="fc" id="L98">    }</span>
 
     private void cargarIngredientes( File archivoIngredientes ) throws IngredienteRepetidoException, IOException
     {
-<span class="fc" id="L193">        BufferedReader reader = new BufferedReader( new java.io.FileReader( archivoIngredientes ) );</span>
+<span class="fc" id="L102">        BufferedReader reader = new BufferedReader( new java.io.FileReader( archivoIngredientes ) );</span>
         try
         {
-<span class="fc" id="L196">            String linea = reader.readLine( );</span>
-<span class="fc bfc" id="L197" title="All 2 branches covered.">            while( linea != null )</span>
+<span class="fc" id="L105">            String linea = reader.readLine( );</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            while( linea != null )</span>
             {
-<span class="fc bfc" id="L199" title="All 2 branches covered.">                if( !linea.isEmpty( ) )</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">                if( !linea.isEmpty( ) )</span>
                 {
-<span class="fc" id="L201">                    String[] ingredientesStr = linea.split( &quot;;&quot; );</span>
-<span class="fc" id="L202">                    String nombreIngrediente = ingredientesStr[ 0 ];</span>
-<span class="fc" id="L203">                    int costoIngrediente = Integer.parseInt( ingredientesStr[ 1 ] );</span>
-<span class="fc" id="L204">                    Ingrediente ingrediente = new Ingrediente( nombreIngrediente, costoIngrediente );</span>
+<span class="fc" id="L110">                    String[] ingredientesStr = linea.split( &quot;;&quot; );</span>
+<span class="fc" id="L111">                    String nombreIngrediente = ingredientesStr[ 0 ];</span>
+<span class="fc" id="L112">                    int costoIngrediente = Integer.parseInt( ingredientesStr[ 1 ] );</span>
+<span class="fc" id="L113">                    Ingrediente ingrediente = new Ingrediente( nombreIngrediente, costoIngrediente );</span>
 
-<span class="fc bfc" id="L206" title="All 2 branches covered.">                    for( Ingrediente i : this.ingredientes )</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">                    for( Ingrediente i : this.ingredientes )</span>
                     {
-<span class="fc bfc" id="L208" title="All 2 branches covered.">                        if( i.getNombre( ).equals( nombreIngrediente ) )</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                        if( i.getNombre( ).equals( nombreIngrediente ) )</span>
                         {
-<span class="fc" id="L210">                            throw new IngredienteRepetidoException( nombreIngrediente );</span>
+<span class="fc" id="L119">                            throw new IngredienteRepetidoException( nombreIngrediente );</span>
                         }
-<span class="fc" id="L212">                    }</span>
-<span class="fc" id="L213">                    this.ingredientes.add( ingrediente );</span>
+<span class="fc" id="L121">                    }</span>
+<span class="fc" id="L122">                    this.ingredientes.add( ingrediente );</span>
                 }
-<span class="fc" id="L215">                linea = reader.readLine( );</span>
+<span class="fc" id="L124">                linea = reader.readLine( );</span>
             }
         }
-<span class="fc" id="L218">        catch( Exception e )</span>
+<span class="fc" id="L127">        catch( Exception e )</span>
         {
-<span class="fc" id="L220">            throw e;</span>
+<span class="fc" id="L129">            throw e;</span>
         }
         finally
         {
-<span class="fc" id="L224">            reader.close( );</span>
+<span class="fc" id="L133">            reader.close( );</span>
         }
-<span class="fc" id="L226">    }</span>
+<span class="fc" id="L135">    }</span>
 
     private void cargarMenu( File archivoMenu ) throws ProductoRepetidoException, IOException
     {
-<span class="fc" id="L230">        BufferedReader reader = new BufferedReader( new java.io.FileReader( archivoMenu ) );</span>
+<span class="fc" id="L139">        BufferedReader reader = new BufferedReader( new java.io.FileReader( archivoMenu ) );</span>
         try
         {
-<span class="fc" id="L233">            String linea = reader.readLine( );</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">            while( linea != null )</span>
+<span class="fc" id="L142">            String linea = reader.readLine( );</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            while( linea != null )</span>
             {
-<span class="fc bfc" id="L236" title="All 2 branches covered.">                if( !linea.isEmpty( ) )</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">                if( !linea.isEmpty( ) )</span>
                 {
-<span class="fc" id="L238">                    String[] productoStr = linea.split( &quot;;&quot; );</span>
-<span class="fc" id="L239">                    String nombreProducto = productoStr[ 0 ];</span>
-<span class="fc" id="L240">                    int costoProducto = Integer.parseInt( productoStr[ 1 ] );</span>
-<span class="fc" id="L241">                    ProductoMenu producto = new ProductoMenu( nombreProducto, costoProducto );</span>
+<span class="fc" id="L147">                    String[] productoStr = linea.split( &quot;;&quot; );</span>
+<span class="fc" id="L148">                    String nombreProducto = productoStr[ 0 ];</span>
+<span class="fc" id="L149">                    int costoProducto = Integer.parseInt( productoStr[ 1 ] );</span>
+<span class="fc" id="L150">                    ProductoMenu producto = new ProductoMenu( nombreProducto, costoProducto );</span>
 
-<span class="fc bfc" id="L243" title="All 2 branches covered.">                    for( ProductoMenu prod : this.menuBase )</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                    for( ProductoMenu prod : this.menuBase )</span>
                     {
-<span class="fc bfc" id="L245" title="All 2 branches covered.">                        if( prod.getNombre( ).equals( nombreProducto ) )</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">                        if( prod.getNombre( ).equals( nombreProducto ) )</span>
                         {
-<span class="fc" id="L247">                            throw new ProductoRepetidoException( nombreProducto );</span>
+<span class="fc" id="L156">                            throw new ProductoRepetidoException( nombreProducto );</span>
                         }
-<span class="fc" id="L249">                    }</span>
-<span class="fc" id="L250">                    this.menuBase.add( producto );</span>
+<span class="fc" id="L158">                    }</span>
+<span class="fc" id="L159">                    this.menuBase.add( producto );</span>
                 }
-<span class="fc" id="L252">                linea = reader.readLine( );</span>
+<span class="fc" id="L161">                linea = reader.readLine( );</span>
             }
         }
-<span class="fc" id="L255">        catch( Exception e )</span>
+<span class="fc" id="L164">        catch( Exception e )</span>
         {
-<span class="fc" id="L257">            throw e;</span>
+<span class="fc" id="L166">            throw e;</span>
         }
         finally
         {
-<span class="fc" id="L261">            reader.close( );</span>
+<span class="fc" id="L170">            reader.close( );</span>
         }
-<span class="fc" id="L263">    }</span>
+<span class="fc" id="L172">    }</span>
 
     private void cargarCombos( File archivoCombos ) throws ProductoRepetidoException, ProductoFaltanteException, IOException
     {
-<span class="fc" id="L267">        BufferedReader reader = new BufferedReader( new java.io.FileReader( archivoCombos ) );</span>
+<span class="fc" id="L176">        BufferedReader reader = new BufferedReader( new java.io.FileReader( archivoCombos ) );</span>
         try
         {
-<span class="fc" id="L270">            String linea = reader.readLine( );</span>
-<span class="fc bfc" id="L271" title="All 2 branches covered.">            while( linea != null )</span>
+<span class="fc" id="L179">            String linea = reader.readLine( );</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">            while( linea != null )</span>
             {
-<span class="fc bfc" id="L273" title="All 2 branches covered.">                if( !linea.isEmpty( ) )</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                if( !linea.isEmpty( ) )</span>
                 {
-<span class="fc" id="L275">                    String[] comboStr = linea.split( &quot;;&quot; );</span>
-<span class="fc" id="L276">                    String nombreCombo = comboStr[ 0 ];</span>
-<span class="fc" id="L277">                    double descuento = Double.parseDouble( comboStr[ 1 ].replace( &quot;%&quot;, &quot;&quot; ) ) / 100;</span>
+<span class="fc" id="L184">                    String[] comboStr = linea.split( &quot;;&quot; );</span>
+<span class="fc" id="L185">                    String nombreCombo = comboStr[ 0 ];</span>
+<span class="fc" id="L186">                    double descuento = Double.parseDouble( comboStr[ 1 ].replace( &quot;%&quot;, &quot;&quot; ) ) / 100;</span>
 
-<span class="fc bfc" id="L279" title="All 2 branches covered.">                    for( Combo c : this.menuCombos )</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">                    for( Combo c : this.menuCombos )</span>
                     {
-<span class="fc bfc" id="L281" title="All 2 branches covered.">                        if( c.getNombre( ).equals( nombreCombo ) )</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">                        if( c.getNombre( ).equals( nombreCombo ) )</span>
                         {
-<span class="fc" id="L283">                            throw new ProductoRepetidoException( nombreCombo );</span>
+<span class="fc" id="L192">                            throw new ProductoRepetidoException( nombreCombo );</span>
                         }
-<span class="fc" id="L285">                    }</span>
+<span class="fc" id="L194">                    }</span>
 
-<span class="fc" id="L287">                    ArrayList&lt;ProductoMenu&gt; itemsCombo = new ArrayList&lt;&gt;( );</span>
-<span class="fc bfc" id="L288" title="All 2 branches covered.">                    for( int i = 2; i &lt; comboStr.length; i++ )</span>
+<span class="fc" id="L196">                    ArrayList&lt;ProductoMenu&gt; itemsCombo = new ArrayList&lt;&gt;( );</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">                    for( int i = 2; i &lt; comboStr.length; i++ )</span>
                     {
-<span class="fc" id="L290">                        String nombreProducto = comboStr[ i ];</span>
-<span class="fc" id="L291">                        ProductoMenu productoItem = null;</span>
+<span class="fc" id="L199">                        String nombreProducto = comboStr[ i ];</span>
+<span class="fc" id="L200">                        ProductoMenu productoItem = null;</span>
 
-<span class="fc" id="L293">                        int index = 0;</span>
-<span class="fc" id="L294">                        boolean found = false;</span>
-<span class="fc bfc" id="L295" title="All 4 branches covered.">                        while( index &lt; this.menuBase.size( ) &amp;&amp; !found )</span>
+<span class="fc" id="L202">                        int index = 0;</span>
+<span class="fc" id="L203">                        boolean found = false;</span>
+<span class="fc bfc" id="L204" title="All 4 branches covered.">                        while( index &lt; this.menuBase.size( ) &amp;&amp; !found )</span>
                         {
-<span class="fc bfc" id="L297" title="All 2 branches covered.">                            if( this.menuBase.get( index ).getNombre( ).equals( nombreProducto ) )</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">                            if( this.menuBase.get( index ).getNombre( ).equals( nombreProducto ) )</span>
                             {
-<span class="fc" id="L299">                                productoItem = this.menuBase.get( index );</span>
-<span class="fc" id="L300">                                found = true;</span>
+<span class="fc" id="L208">                                productoItem = this.menuBase.get( index );</span>
+<span class="fc" id="L209">                                found = true;</span>
                             }
-<span class="fc" id="L302">                            index++;</span>
+<span class="fc" id="L211">                            index++;</span>
                         }
 
-<span class="fc bfc" id="L305" title="All 2 branches covered.">                        if( productoItem == null )</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                        if( productoItem == null )</span>
                         {
-<span class="fc" id="L307">                            throw new ProductoFaltanteException( nombreProducto );</span>
+<span class="fc" id="L216">                            throw new ProductoFaltanteException( nombreProducto );</span>
                         }
 
-<span class="fc" id="L310">                        itemsCombo.add( productoItem );</span>
+<span class="fc" id="L219">                        itemsCombo.add( productoItem );</span>
                     }
 
-<span class="fc" id="L313">                    Combo combo = new Combo( nombreCombo, descuento, itemsCombo );</span>
-<span class="fc" id="L314">                    this.menuCombos.add( combo );</span>
+<span class="fc" id="L222">                    Combo combo = new Combo( nombreCombo, descuento, itemsCombo );</span>
+<span class="fc" id="L223">                    this.menuCombos.add( combo );</span>
                 }
-<span class="fc" id="L316">                linea = reader.readLine( );</span>
+<span class="fc" id="L225">                linea = reader.readLine( );</span>
             }
         }
-<span class="fc" id="L319">        catch( Exception e )</span>
+<span class="fc" id="L228">        catch( Exception e )</span>
         {
-<span class="fc" id="L321">            throw e;</span>
+<span class="fc" id="L230">            throw e;</span>
         }
         finally
         {
-<span class="fc" id="L325">            reader.close( );</span>
+<span class="fc" id="L234">            reader.close( );</span>
         }
-<span class="fc" id="L327">    }</span>
+<span class="fc" id="L236">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

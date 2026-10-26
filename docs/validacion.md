@@ -1,42 +1,30 @@
-# Resultados de validación
+# Validación
 
-Validación realizada el 25 de octubre de 2026 con JUnit Jupiter 5.14.4, JaCoCo 0.8.15 y OpenJDK 26.0.2. Se recompilaron las fuentes con `javac --release 17 -encoding UTF-8` y se actualizaron los archivos de `bin/`.
+Se ejecutaron 54 pruebas con JUnit 5 y todas pasaron. Las fuentes se compilaron con Java 17 como versión de destino.
 
-## Pruebas
+ProductoMenuTest tiene 3 pruebas, ProductoAjustadoTest 10, ComboTest 8, PedidoTest 11, RestauranteTest 20 e IngredienteTest 2.
 
-| Clase de pruebas | Ejecutadas | Fallidas |
-| --- | ---: | ---: |
-| ProductoMenuTest | 3 | 0 |
-| ProductoAjustadoTest | 10 | 0 |
-| ComboTest | 8 | 0 |
-| PedidoTest | 10 | 0 |
-| RestauranteTest | 20 | 0 |
-| IngredienteTest | 2 | 0 |
-| **Total** | **53** | **0** |
+## Cobertura
 
-## Cobertura de las clases del modelo
-
-| Clase | Líneas cubiertas | Instrucciones cubiertas | Ramas cubiertas | Métodos cubiertos |
+| Clase | Líneas | Instrucciones | Ramas | Métodos |
 | --- | ---: | ---: | ---: | ---: |
-| ProductoMenu | 10/10 | 34/34 | No aplica | 4/4 |
-| ProductoAjustado | 26/26 | 116/116 | 6/6 | 6/6 |
-| Combo | 16/16 | 71/71 | 2/2 | 4/4 |
-| Pedido | 35/35 | 149/149 | 4/4 | 9/9 |
+| ProductoMenu | 7/7 | 21/21 | No aplica | 4/4 |
+| ProductoAjustado | 27/27 | 136/136 | 6/6 | 6/6 |
+| Combo | 21/21 | 87/87 | 4/4 | 5/5 |
+| Pedido | 32/32 | 159/159 | 4/4 | 9/9 |
 | Restaurante | 97/97 | 389/389 | 38/38 | 13/13 |
 | Ingrediente | 6/6 | 15/15 | No aplica | 3/3 |
 
-Todas las clases exigidas alcanzan el 100 %. La interfaz Producto no contiene código ejecutable. El reporte se limita a las clases del modelo; no representa cobertura de la interfaz de consola.
+Las cinco clases exigidas por el taller conservan el 100 % de cobertura. El reporte corresponde al modelo de la aplicación.
 
-- [Reporte HTML de JaCoCo](cobertura/index.html).
-- [Datos XML de JaCoCo](cobertura.xml).
+[Reporte HTML](cobertura/index.html)
 
-## Verificación de consola
+[Reporte XML](cobertura.xml)
 
-Se verificaron la carga automática de datos, la visualización del menú, la apertura del pedido, los ajustes, el cierre, el archivo de factura y la consulta por identificador. En el caso de regresión se agregó y se eliminó queso mozzarella de una hamburguesa corral:
+## Factura de ejemplo
 
-- Base: $14.000.
-- Adición: $2.500.
-- Eliminación: no descuenta.
-- Neto: $16.500; IVA: $3.135; total: $19.635.
+La factura se generó desde la consola con el catálogo nuevo. Camila Rojas pidió una hamburguesa de la casa con queso cheddar y sin tomate, unas papas rústicas y una limonada natural.
 
-El flujo y las pruebas utilizaron archivos temporales y conservaron intactas las facturas de ejemplo.
+El subtotal es $33200, el IVA es $6308 y el total es $39508. La factura usa saltos de línea y palabras para describir los ajustes, sin guiones ni signos de puntuación como separadores.
+
+También se verificaron pedidos con combos, la consulta por número de pedido, las opciones inválidas y el cierre de la entrada de consola.

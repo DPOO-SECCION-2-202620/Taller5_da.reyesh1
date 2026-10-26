@@ -21,7 +21,7 @@ public class ProductoMenuTest
     void facturaIncluyeNombreYPrecio( )
     {
         ProductoMenu producto = new ProductoMenu( "papas", 5000 );
-        assertEquals( "papas\n            5000\n", producto.generarTextoFactura( ) );
+        assertEquals( "papas\nPrecio $5000\n\n", producto.generarTextoFactura( ) );
     }
 
     @Test
@@ -29,6 +29,6 @@ public class ProductoMenuTest
     {
         ProductoMenu producto = new ProductoMenu( "cortesía", 0 );
         assertEquals( 0, producto.getPrecio( ) );
-        assertEquals( "cortesía\n            0\n", producto.generarTextoFactura( ) );
+        assertEquals( "cortesía\nPrecio $0\n\n", producto.generarTextoFactura( ) );
     }
 }

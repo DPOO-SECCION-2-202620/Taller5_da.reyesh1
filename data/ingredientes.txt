@@ -1,0 +1,10 @@
+Queso cheddar;2200
+Tocineta ahumada;3500
+Cebolla caramelizada;1800
+Champiñones salteados;2800
+Pepinillos dulces;1200
+Salsa de ajo;1000
+Jalapeños;1500
+Tomate fresco;900
+Lechuga crespa;800
+Huevo a la plancha;2500

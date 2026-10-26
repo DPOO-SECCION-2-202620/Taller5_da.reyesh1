@@ -17,7 +17,8 @@ Estos escenarios definen las acciones y los resultados esperados de las pruebas.
 | Pedido | Crear dos pedidos consecutivos. | Sus identificadores son distintos y consecutivos. |
 | Pedido | Crear un pedido vacío y agregar varios productos. | El total vacío es cero; los productos se suman y se agrega IVA del 19 %. |
 | Pedido | Agregar productos básicos, ajustados y combos. | Todos participan en el total y aparecen en la factura. |
-| Pedido | Generar factura con cliente y dirección conocidos. | Incluye identificación, cliente, dirección, productos, neto, IVA y total correctos. |
+| Pedido | Generar factura con cliente y dirección conocidos. | Incluye identificación, cliente, dirección, productos, subtotal, IVA y total correctos. |
+| Pedido | Facturar ajustes y un combo con descuento fraccionario. | Los ajustes aparecen como Con y Sin y el texto no usa guiones ni puntos ni comas. |
 | Pedido | Guardar una factura en un directorio temporal y reemplazar un archivo existente. | El contenido persistido coincide con la factura completa del pedido. |
 | Pedido | Guardar en una ruta cuyo directorio padre no existe. | Se lanza FileNotFoundException. |
 | Restaurante | Crear un restaurante e iniciar un pedido. | Las colecciones comienzan vacías y el pedido conserva los datos del cliente. |

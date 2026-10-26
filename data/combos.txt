@@ -1,0 +1,5 @@
+Almuerzo de la casa;12%;Hamburguesa de la casa;Papas rústicas;Limonada natural
+Para el antojo;8%;Hamburguesa doble;Papas con queso;Malteada de vainilla
+Opción verde;10%;Hamburguesa vegetariana;Aros de cebolla;Té frío de durazno
+Plan de pollo;7.5%;Hamburguesa de pollo;Papas rústicas;Agua con gas
+Tarde en la esquina;5%;Hamburguesa con champiñones;Papas rústicas;Té frío de durazno

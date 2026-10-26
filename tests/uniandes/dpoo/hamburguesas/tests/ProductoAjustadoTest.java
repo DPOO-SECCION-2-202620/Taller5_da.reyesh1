@@ -94,16 +94,16 @@ public class ProductoAjustadoTest
         ajustado.agregarIngrediente( queso );
         ajustado.agregarIngrediente( queso );
         ajustado.eliminarIngrediente( new Ingrediente( "tomate", 1000 ) );
-        String esperado = "hamburguesa\n            15000\n"
-                + "    +queso\n    2000\n"
-                + "    +queso\n    2000\n"
-                + "    -tomate\n\n    19000\n";
+        String esperado = "hamburguesa\nPrecio base $15000\n"
+                + "Con queso por $2000\n"
+                + "Con queso por $2000\n"
+                + "Sin tomate\nValor del producto $19000\n\n";
         assertEquals( esperado, ajustado.generarTextoFactura( ) );
     }
 
     @Test
     void facturaSinAjustesIncluyeElProductoYElPrecioFinal( )
     {
-        assertEquals( "hamburguesa\n            15000\n\n    15000\n", ajustado.generarTextoFactura( ) );
+        assertEquals( "hamburguesa\nPrecio base $15000\nValor del producto $15000\n\n", ajustado.generarTextoFactura( ) );
     }
 }

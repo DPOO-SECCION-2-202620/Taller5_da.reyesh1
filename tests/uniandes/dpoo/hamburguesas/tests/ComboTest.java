@@ -76,6 +76,6 @@ public class ComboTest
     void facturaIncluyeNombreDescuentoYPrecio( )
     {
         Combo combo = new Combo( "familiar", 0.1, productos );
-        assertEquals( "Combo familiar\n Descuento: 0.1\n            22500\n", combo.generarTextoFactura( ) );
+        assertEquals( "Combo familiar\nIncluye hamburguesa y papas y gaseosa\nDescuento $2500\nValor del combo $22500\n\n", combo.generarTextoFactura( ) );
     }
 }

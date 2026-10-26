@@ -2,77 +2,46 @@
 
 import java.util.ArrayList;
 
-/**
- * La clase utilizada para organizar la información de un combo
- */
-public class Combo implements Producto
-{
-    /**
-     * Los productos que hacen parte del combo
-     */
-    private ArrayList&lt;ProductoMenu&gt; itemsCombo;
+public class Combo implements Producto {
+    private final ArrayList&lt;ProductoMenu&gt; itemsCombo;
+    private final double descuento;
+    private final String nombreCombo;
 
-    /**
-     * El descuento que incluye el combo. Es un número entre 0 y 1, donde 0 corresponde a que no hay descuento y 1 corresponde al 100% de descuento
-     */
-    private double descuento;
-
-    /**
-     * El nombre del combo
-     */
-    private String nombreCombo;
-
-    /**
-     * Construye un nuevo combo
-     * @param nombre El nombre del combo
-     * @param descuento El descuento sobre el valor normal de los productos en el combo
-     * @param items Los productos que hacen parte del combo
-     */
-    public Combo( String nombre, double descuento, ArrayList&lt;ProductoMenu&gt; items )
-<span class="fc" id="L32">    {</span>
-<span class="fc" id="L33">        this.itemsCombo = new ArrayList&lt;&gt;( items );</span>
-<span class="fc" id="L34">        this.nombreCombo = nombre;</span>
-<span class="fc" id="L35">        this.descuento = descuento;</span>
-<span class="fc" id="L36">    }</span>
+<span class="fc" id="L10">    public Combo(String nombre, double descuento, ArrayList&lt;ProductoMenu&gt; items) {</span>
+<span class="fc" id="L11">        nombreCombo = nombre;</span>
+<span class="fc" id="L12">        this.descuento = descuento;</span>
+<span class="fc" id="L13">        itemsCombo = new ArrayList&lt;&gt;(items);</span>
+<span class="fc" id="L14">    }</span>
 
     @Override
-    public String getNombre( )
-    {
-<span class="fc" id="L41">        return nombreCombo;</span>
+    public String getNombre() {
+<span class="fc" id="L18">        return nombreCombo;</span>
     }
 
-    /**
-     * Retorna el precio del combo.
-     * 
-     * El precio está basado en aplicarle el descuento del combo al valor de cada uno de los productos.
-     */
+    private int getPrecioSinDescuento() {
+<span class="fc" id="L22">        int total = 0;</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        for (ProductoMenu producto : itemsCombo) {</span>
+<span class="fc" id="L24">            total += producto.getPrecio();</span>
+<span class="fc" id="L25">        }</span>
+<span class="fc" id="L26">        return total;</span>
+    }
+
     @Override
-    public int getPrecio( )
-    {
-<span class="fc" id="L52">        double precio = 0;</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        for( Producto i : itemsCombo )</span>
-        {
-<span class="fc" id="L55">            precio += i.getPrecio( );</span>
-<span class="fc" id="L56">        }</span>
-
-<span class="fc" id="L58">        return ( int ) ( precio - ( precio * descuento ));</span>
+    public int getPrecio() {
+<span class="fc" id="L31">        int precioNormal = getPrecioSinDescuento();</span>
+<span class="fc" id="L32">        return (int) (precioNormal - precioNormal * descuento);</span>
     }
 
-    /**
-     * Genera el texto que debe aparecer en la factura.
-     * 
-     * El texto incluye el nombre del combo, su costo y el valor del descuento
-     */
     @Override
-    public String generarTextoFactura( )
-    {
-<span class="fc" id="L69">        StringBuffer sb = new StringBuffer( );</span>
-<span class="fc" id="L70">        sb.append( &quot;Combo &quot; + nombreCombo + &quot;\n&quot; );</span>
-<span class="fc" id="L71">        sb.append( &quot; Descuento: &quot; + descuento + &quot;\n&quot; );</span>
-<span class="fc" id="L72">        sb.append( &quot;            &quot; + getPrecio( ) + &quot;\n&quot; );</span>
-
-<span class="fc" id="L74">        return sb.toString( );</span>
+    public String generarTextoFactura() {
+<span class="fc" id="L37">        ArrayList&lt;String&gt; nombres = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        for (ProductoMenu producto : itemsCombo) {</span>
+<span class="fc" id="L39">            nombres.add(producto.getNombre());</span>
+<span class="fc" id="L40">        }</span>
+<span class="fc" id="L41">        return &quot;Combo &quot; + nombreCombo + &quot;\n&quot;</span>
+<span class="fc" id="L42">                + &quot;Incluye &quot; + String.join(&quot; y &quot;, nombres) + &quot;\n&quot;</span>
+<span class="fc" id="L43">                + &quot;Descuento $&quot; + (getPrecioSinDescuento() - getPrecio()) + &quot;\n&quot;</span>
+<span class="fc" id="L44">                + &quot;Valor del combo $&quot; + getPrecio() + &quot;\n\n&quot;;</span>
     }
-
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,12 @@
+Hamburguesa de la casa;18500
+Hamburguesa doble;26500
+Hamburguesa de pollo;21000
+Hamburguesa vegetariana;19500
+Hamburguesa con champiñones;23500
+Papas rústicas;6500
+Papas con queso;8500
+Aros de cebolla;7000
+Limonada natural;6000
+Té frío de durazno;5500
+Agua con gas;4500
+Malteada de vainilla;9500

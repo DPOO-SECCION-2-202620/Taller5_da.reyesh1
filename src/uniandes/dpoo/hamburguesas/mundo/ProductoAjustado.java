@@ -2,95 +2,52 @@ package uniandes.dpoo.hamburguesas.mundo;
 
 import java.util.ArrayList;
 
-/**
- * Un producto ajustado es un producto para el cual el cliente solicitó alguna modificación.
- */
-public class ProductoAjustado implements Producto
-{
-    /**
-     * El producto base que el cliente sobre el cual el cliente quiere hacer ajustes
-     */
-    private ProductoMenu productoBase;
+public class ProductoAjustado implements Producto {
+    private final ProductoMenu productoBase;
+    private final ArrayList<Ingrediente> agregados;
+    private final ArrayList<Ingrediente> eliminados;
 
-    /**
-     * La lista de ingrediente que el usuario quiere agregar. El mismo ingrediente puede aparecer varias veces.
-     */
-    private ArrayList<Ingrediente> agregados;
-
-    /**
-     * La lista de ingrediente que el usuario quiere eliminar.
-     */
-    private ArrayList<Ingrediente> eliminados;
-
-    /**
-     * Construye un nuevo producto ajustado a partir del producto base y sin modificaciones
-     * @param productoBase El producto base que se va a ajustar
-     */
-    public ProductoAjustado( ProductoMenu productoBase )
-    {
+    public ProductoAjustado(ProductoMenu productoBase) {
         this.productoBase = productoBase;
-        agregados = new ArrayList<Ingrediente>( );
-        eliminados = new ArrayList<Ingrediente>( );
+        agregados = new ArrayList<>();
+        eliminados = new ArrayList<>();
     }
 
     @Override
-    public String getNombre( )
-    {
-        return productoBase.getNombre( );
+    public String getNombre() {
+        return productoBase.getNombre();
     }
 
-    /**
-     * Retorna el precio del producto ajustado, que debe ser igual al del producto base, sumándole el precio de los ingredientes adicionales.
-     */
     @Override
-    public int getPrecio( )
-    {
-        int precio = productoBase.getPrecio( );
-        for( Ingrediente ingrediente : agregados )
-        {
-            precio += ingrediente.getCostoAdicional( );
+    public int getPrecio() {
+        int total = productoBase.getPrecio();
+        for (Ingrediente ingrediente : agregados) {
+            total += ingrediente.getCostoAdicional();
         }
-        return precio;
+        return total;
     }
-    /**
-     * Registra una adición. Un ingrediente puede agregarse varias veces y cada adición se cobra.
-     */
-    public void agregarIngrediente(Ingrediente ingrediente)
-    {
+
+    public void agregarIngrediente(Ingrediente ingrediente) {
         agregados.add(ingrediente);
     }
 
-    /**
-     * Registra una eliminación sin modificar el precio base ni el costo de las adiciones.
-     */
-    public void eliminarIngrediente(Ingrediente ingrediente)
-    {
+    public void eliminarIngrediente(Ingrediente ingrediente) {
         eliminados.add(ingrediente);
     }
 
-    /**
-     * Genera el texto que debe aparecer en la factura.
-     * 
-     * El texto incluye el producto base, los ingredientes adicionales con su costo, los ingredientes eliminados, y el precio total
-     */
     @Override
-    public String generarTextoFactura( )
-    {
-        StringBuffer sb = new StringBuffer( );
-        sb.append( productoBase.generarTextoFactura() );
-        for( Ingrediente ing : agregados )
-        {
-            sb.append( "    +" + ing.getNombre( ) );
-            sb.append( "\n    " + ing.getCostoAdicional( ) + "\n");
+    public String generarTextoFactura() {
+        StringBuilder detalle = new StringBuilder();
+        detalle.append(productoBase.getNombre()).append("\n");
+        detalle.append("Precio base $").append(productoBase.getPrecio()).append("\n");
+        for (Ingrediente ingrediente : agregados) {
+            detalle.append("Con ").append(ingrediente.getNombre())
+                    .append(" por $").append(ingrediente.getCostoAdicional()).append("\n");
         }
-        for( Ingrediente ing : eliminados )
-        {
-            sb.append( "    -" + ing.getNombre( ) + "\n");
+        for (Ingrediente ingrediente : eliminados) {
+            detalle.append("Sin ").append(ingrediente.getNombre()).append("\n");
         }
-
-        sb.append( "\n    " + getPrecio( ) + "\n" );
-
-        return sb.toString( );
+        detalle.append("Valor del producto $").append(getPrecio()).append("\n\n");
+        return detalle.toString();
     }
-
 }
