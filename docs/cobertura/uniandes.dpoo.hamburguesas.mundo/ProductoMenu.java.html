@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductoMenu.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Taller 5 - clases exigidas</a> &gt; <a href="index.source.html" class="el_package">uniandes.dpoo.hamburguesas.mundo</a> &gt; <span class="el_source">ProductoMenu.java</span></div><h1>ProductoMenu.java</h1><pre class="source lang-java linenums">package uniandes.dpoo.hamburguesas.mundo;
+
+/**
+ * Esta es la clase que se utiliza para representar un producto que ofrece el restaurante y que puede hacer parte de un combo
+ */
+public class ProductoMenu implements Producto
+{
+    /**
+     * El nombre del producto
+     */
+    private String nombre;
+
+    /**
+     * El precio base del producto, antes de que se le agreguen ingredientes adicionales
+     */
+    private int precioBase;
+
+    /**
+     * Crea un nuevo producto con un nombre y un precio base
+     * @param nombre
+     * @param precioBase
+     */
+    public ProductoMenu( String nombre, int precioBase )
+<span class="fc" id="L24">    {</span>
+<span class="fc" id="L25">        this.nombre = nombre;</span>
+<span class="fc" id="L26">        this.precioBase = precioBase;</span>
+<span class="fc" id="L27">    }</span>
+
+    @Override
+    public String getNombre( )
+    {
+<span class="fc" id="L32">        return nombre;</span>
+    }
+
+    @Override
+    public int getPrecio( )
+    {
+<span class="fc" id="L38">        return precioBase;</span>
+    }
+
+    /**
+     * Genera el texto que debe aparecer en la factura.
+     * 
+     * El texto incluye el nombre del producto y su costo
+     */
+    @Override
+    public String generarTextoFactura( )
+    {
+<span class="fc" id="L49">        StringBuffer sb = new StringBuffer( );</span>
+<span class="fc" id="L50">        sb.append( nombre + &quot;\n&quot; );</span>
+<span class="fc" id="L51">        sb.append( &quot;            &quot; + getPrecio( ) + &quot;\n&quot; );</span>
+
+<span class="fc" id="L53">        return sb.toString( );</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
